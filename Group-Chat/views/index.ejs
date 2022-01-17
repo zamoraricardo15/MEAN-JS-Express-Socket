@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Chat group</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous">
+  </head>
+
+
+  <body>
+      <div id="main" class="container">
+
+        <h1><u>Conversation Board</u></h1>
+        <div class="chat-box container border border-dark pb-2" id="box" style="width:40rem; height:45rem; overflow-y:scroll ">
+
+            
+        </div>
+
+        <br>
+
+        <div class="container pl-5">
+            <input type="text" id=message class="form-control" placeholder="type message here" name="message">   
+
+        </div>
+        <br>
+
+        <div class="container text-right">
+
+            <button class="send btn btn-success" type="submit">send</button>
+
+        </div>
+         
+      </div>
+      
+   
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"> </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script>
+
+        var socket = io();
+
+        var person = prompt("enter a name for the chat");
+        var elem = document.getElementById('box');
+
+        
+        
+        
+        
+        socket.on("global-log",function(messages){
+            $(".chat-box").html(function(){
+
+
+                    var content="";
+
+                    for (var i =0; i< messages.chat.length;i++){
+
+                        content += `<p class="mt-5 mb-5">${messages.chat[i]}</p>`
+
+
+                    }
+                    return content;
+                }); 
+            
+            elem.scrollTop = elem.scrollHeight;         
+        });
+        
+
+
+        socket.on("initial",function(messages){
+
+
+            $(".chat-box").html(function(){
+
+
+                    var content="";
+                    for (var i =0; i< messages.chat.length;i++){
+
+
+
+                        content += `<p class="mt-5 mb-5">${messages.chat[i]}</p>`
+
+
+                    }
+                    return content;
+                });
+            
+            elem.scrollTop = elem.scrollHeight; 
+
+
+        });
+        socket.emit("set-name",{name:person});
+        $(".send").click(function(){
+
+
+            socket.emit("send",{msg:$("#message").val()});
+
+
+            socket.on("user-log",function(messages){
+
+                $(".chat-box").html(function(){
+
+                    var content="";
+                    for (var i =0; i< messages.chat.length;i++){
+
+                        content += `<p class="mt-5 mb-5">${messages.chat[i]}</p>`
+
+                    }
+                    
+                    return content;
+
+                });
+                console.log(messages.chat[0])
+
+                $("#message").val("");
+
+                
+            });
+            console.log("send click");
+
+            
+            elem.scrollTop = elem.scrollHeight;
+            
+        });
+        
+        
+        
+    </script>
+</body>
+</html>
