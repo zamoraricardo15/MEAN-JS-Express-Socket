@@ -1,1 +1,1 @@
-# Coding Dojo MEAN Express JS Node
+# Coding Dojo MEAN Express JS Socket.io 
